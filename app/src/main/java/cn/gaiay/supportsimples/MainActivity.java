@@ -17,5 +17,6 @@ public class MainActivity extends BaseListActivity {
     @Override
     protected void initData(List<ActivityBean> list) {
         list.add(new ActivityBean("Adapter", AdapterActivity.class));
+        list.add(new ActivityBean("TabLayout", TabLayoutActivity.class));
     }
 }

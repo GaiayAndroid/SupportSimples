@@ -17,6 +17,14 @@ public class DataProvider {
         return data;
     }
 
+    public static List<String> provideString(String base, int size) {
+        List<String> data = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            data.add(base + " " + i);
+        }
+        return data;
+    }
+
     public static List<String> provideNumberString(int size) {
         List<String> data = new ArrayList<>();
         for (int i = 0; i < size; i++) {

@@ -23,6 +23,10 @@
         <activity android:name="cn.gaiay.supportsimples.adapter.HorizontalRecyclerActivity" />
         <activity android:name="cn.gaiay.supportsimples.adapter.MultiItemActivity" />
         <activity android:name="cn.gaiay.supportsimples.adapter.RefreshAndLoadMoreActivity" />
+
+        <activity android:name="cn.gaiay.supportsimples.TabLayoutActivity" />
+        <activity android:name="cn.gaiay.supportsimples.tablayout.CommonTabLayoutActivity" />
+        <activity android:name="cn.gaiay.supportsimples.tablayout.ScrollableTabLayoutActivity" />
     </application>
 
 </manifest>
