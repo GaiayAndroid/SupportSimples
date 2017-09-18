@@ -6,7 +6,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.gaiay.library.recycler.adapter.CommonAdapter;
-import com.gaiay.library.recycler.listener.RefreshListener;
 import com.gaiay.library.recycler.widget.DividerItemDecoration;
 import com.gaiay.library.recycler.widget.RefreshLayout;
 
@@ -43,7 +42,7 @@ public class RefreshAndLoadMoreActivity extends BaseActivity {
     }
 
     private void core() {
-        mRefreshLayout.setRefreshListener(new RefreshListener() {
+        mRefreshLayout.setRefreshListener(new RefreshLayout.RefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
                 getData(true);

@@ -5,7 +5,6 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
-import com.gaiay.library.recycler.listener.RefreshListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
@@ -94,6 +93,12 @@ public class RefreshLayout extends SmartRefreshLayout {
     @Deprecated
     public SmartRefreshLayout setOnRefreshLoadmoreListener(OnRefreshLoadmoreListener listener) {
         return super.setOnRefreshLoadmoreListener(listener);
+    }
+
+    public interface RefreshListener {
+        void onRefresh(RefreshLayout refreshLayout);
+
+        void onLoadMore(RefreshLayout refreshLayout);
     }
 
     // ---------------------------- RefreshListener end ---------------------------- //

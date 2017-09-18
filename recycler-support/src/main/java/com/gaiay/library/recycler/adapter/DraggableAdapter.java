@@ -45,12 +45,16 @@ public abstract class DraggableAdapter<T> extends BaseItemDraggableAdapter<T, Vi
         this.mDragOnLongPress = dragOnLongPress;
     }
 
+    public boolean isDraggedItemDraggable(int position) {
+        return true;
+    }
+
     /**
      * 设置是否可以进行拖动
      */
     public void setDraggable(boolean draggable) {
         if (draggable) {
-            ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(this);
+            DragAndSwipeCallback itemDragAndSwipeCallback = new DragAndSwipeCallback(this);
             ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
             itemTouchHelper.attachToRecyclerView(mRecyclerView);
             enableDragItem(itemTouchHelper, mDraggableViewId, mDragOnLongPress);
@@ -70,5 +74,28 @@ public abstract class DraggableAdapter<T> extends BaseItemDraggableAdapter<T, Vi
 
     public void setOnDragListener(OnDragListener l) {
         super.setOnItemDragListener(l);
+    }
+
+    private class DragAndSwipeCallback extends ItemDragAndSwipeCallback {
+
+        DragAndSwipeCallback(BaseItemDraggableAdapter adapter) {
+            super(adapter);
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder source, RecyclerView.ViewHolder target) {
+            if (!isDraggedItemDraggable(source.getLayoutPosition()) || !isDraggedItemDraggable(target.getLayoutPosition())) {
+                return false;
+            }
+            return super.onMove(recyclerView, source, target);
+        }
+
+        @Override
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            if (!isDraggedItemDraggable(viewHolder.getLayoutPosition())) {
+                return makeMovementFlags(0, 0);
+            }
+            return super.getMovementFlags(recyclerView, viewHolder);
+        }
     }
 }
