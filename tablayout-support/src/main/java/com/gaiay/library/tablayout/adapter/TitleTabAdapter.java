@@ -1,12 +1,15 @@
-package com.gaiay.library.tablayout;
+package com.gaiay.library.tablayout.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.SparseIntArray;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.List;
 
 /**
  * <p>Created by RenTao on 2017/9/17.
@@ -14,13 +17,14 @@ import android.widget.TextView;
 
 public class TitleTabAdapter extends TabLayoutAdapter {
     private Context mContext;
-    private String[] mData;
+    private SparseIntArray mActualWidth = new SparseIntArray();
+    private List<String> mData;
     private int mSelectedColor = Color.RED,
                 mUnselectedColor = Color.BLACK;
     private int mTitleSize = 14;
     private int mTabPadding = 50;
 
-    public TitleTabAdapter(Context context, String[] data) {
+    public TitleTabAdapter(Context context, List<String> data) {
         this.mContext = context;
         this.mData = data;
     }
@@ -33,7 +37,10 @@ public class TitleTabAdapter extends TabLayoutAdapter {
         textView.setTextSize(mTitleSize);
         textView.setGravity(Gravity.CENTER);
         textView.setLayoutParams(params);
-        textView.setText(mData[position]);
+        textView.setText(mData.get(position));
+
+        // 获取TextView的文字的长度
+        mActualWidth.put(position, (int) textView.getPaint().measureText(mData.get(position)));
         return textView;
     }
 
@@ -48,7 +55,12 @@ public class TitleTabAdapter extends TabLayoutAdapter {
 
     @Override
     public int getCount() {
-        return mData.length;
+        return mData == null ? 0 : mData.size();
+    }
+
+    @Override
+    public int getActualWidth(int position) {
+        return mActualWidth.get(position);
     }
 
     public void setSelectedColor(int color) {

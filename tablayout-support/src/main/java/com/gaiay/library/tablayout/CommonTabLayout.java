@@ -1,6 +1,7 @@
 package com.gaiay.library.tablayout;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -8,13 +9,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.gaiay.library.tablayout.adapter.TabLayoutAdapter;
+import com.gaiay.library.tablayout.indicator.TabIndicator;
+import com.gaiay.library.tablayout.listener.OnTabSelectedListener;
+
 /**
+ * <pre>
+ * tabLayout.setTabAdapter(TabAdapter);     // 设置Adapter，必须设置
+ * tabLayout.setTabIndicator(TabIndicator); // 设置指示器，非必须
+ * tabLayout.setViewPager(ViewPager);       // 设置ViewPager，非必须
+ * tabLayout.setup();
+ * </pre>
  * <p>Created by RenTao on 2017/9/17.
  */
-
 public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
     private TabLayoutAdapter mAdapter;
+    private TabIndicator mIndicator;
     private ViewPager mViewPager;
+    private int mCurrentItem;
 
     public CommonTabLayout(Context context) {
         this(context, null);
@@ -40,8 +52,8 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
     }
 
     @Override
-    public void setTabIndicator() {
-
+    public void setTabIndicator(TabIndicator tabIndicator) {
+        this.mIndicator = tabIndicator;
     }
 
     @Override
@@ -53,6 +65,10 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
         return mAdapter;
     }
 
+    public TabIndicator getIndicator() {
+        return mIndicator;
+    }
+
     public ViewPager getViewPager() {
         return mViewPager;
     }
@@ -62,11 +78,11 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
         if (mViewPager != null) {
             mViewPager.addOnPageChangeListener(new TabPageChangeListener());
         }
-        invalidateTabs();
+        notifyDataSetChanged();
     }
 
     @Override
-    public void invalidateTabs() {
+    public void notifyDataSetChanged() {
         removeAllViews();
         initTabs();
         setCurrentItem(0);
@@ -91,15 +107,24 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
 
     @Override
     public void setCurrentItem(int position) {
+        this.mCurrentItem = position;
         for (int i = 0; i < getChildCount(); i++) {
             mAdapter.onSelected(getChildAt(i), position == i);
         }
+    }
+
+    @Override
+    public int getCurrentItem() {
+        return mCurrentItem;
     }
 
     private class TabPageChangeListener implements ViewPager.OnPageChangeListener {
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            if (mIndicator != null) {
+                mIndicator.scroll(position, positionOffset, CommonTabLayout.this);
+            }
         }
 
         @Override
@@ -108,9 +133,7 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
         }
 
         @Override
-        public void onPageScrollStateChanged(int state) {
-
-        }
+        public void onPageScrollStateChanged(int state) {}
     }
 
     private OnTabSelectedListener mOnTabSelectedListener;
@@ -136,6 +159,14 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
             if (mOnTabSelectedListener != null) {
                 mOnTabSelectedListener.onSelected(mPosition);
             }
+        }
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        if (mIndicator != null) {
+            mIndicator.onDraw(canvas);
         }
     }
 }

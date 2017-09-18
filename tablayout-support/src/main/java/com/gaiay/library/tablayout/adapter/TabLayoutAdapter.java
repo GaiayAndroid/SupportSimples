@@ -1,4 +1,4 @@
-package com.gaiay.library.tablayout;
+package com.gaiay.library.tablayout.adapter;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,4 +16,6 @@ public abstract class TabLayoutAdapter {
     }
 
     public abstract int getCount();
+
+    public abstract int getActualWidth(int position);
 }

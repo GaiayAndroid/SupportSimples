@@ -8,10 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 
+import com.gaiay.library.tablayout.adapter.TabLayoutAdapter;
+import com.gaiay.library.tablayout.indicator.TabIndicator;
+import com.gaiay.library.tablayout.listener.OnTabSelectedListener;
+
 /**
  * <p>Created by RenTao on 2017/9/17.
  */
-
 public class ScrollableTabLayout extends HorizontalScrollView implements ICommonTabLayout {
     private CommonTabLayout mTabLayout;
 
@@ -41,8 +44,8 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
     }
 
     @Override
-    public void setTabIndicator() {
-        mTabLayout.setTabIndicator();
+    public void setTabIndicator(TabIndicator tabIndicator) {
+        mTabLayout.setTabIndicator(tabIndicator);
     }
 
     @Override
@@ -55,11 +58,11 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
         if (mTabLayout.getViewPager() != null) {
             mTabLayout.getViewPager().addOnPageChangeListener(new ScrollPageChangeListener());
         }
-        invalidateTabs();
+        notifyDataSetChanged();
     }
 
     @Override
-    public void invalidateTabs() {
+    public void notifyDataSetChanged() {
         mTabLayout.removeAllViews();
         initTabs();
         setCurrentItem(0);
@@ -78,41 +81,49 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
         mTabLayout.setCurrentItem(position);
     }
 
+    @Override
+    public int getCurrentItem() {
+        return mTabLayout.getCurrentItem();
+    }
+
     private class ScrollPageChangeListener implements ViewPager.OnPageChangeListener {
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             scrollToPosition(position, positionOffset);
+            if (mTabLayout.getIndicator() != null) {
+                mTabLayout.getIndicator().scroll(position, positionOffset, mTabLayout);
+            }
         }
 
         @Override
         public void onPageSelected(int position) {
-            scrollToPosition(position, 0);
             setCurrentItem(position);
         }
 
         @Override
         public void onPageScrollStateChanged(int state) {}
-    }
 
-    private int calcScrollX(int position, float offset) {
-        final View selectedChild = mTabLayout.getChildAt(position);
-        final View nextChild = position + 1 < mTabLayout.getChildCount() ? mTabLayout.getChildAt(position + 1) : null;
+        private int calcScrollX(int position, float offset) {
+            final View selectedChild = mTabLayout.getChildAt(position);
+            final View nextChild = position + 1 < mTabLayout.getChildCount() ? mTabLayout.getChildAt(position + 1) : null;
 
-        final int selectedWidth = selectedChild.getWidth();
-        final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
+            final int selectedWidth = selectedChild.getWidth();
+            final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
 
-        // base scroll amount: places center of tab in center of parent
-        int scrollBase = selectedChild.getLeft() + selectedWidth / 2 - getWidth() / 2;
-        // offset amount: fraction of the distance between centers of tabs
-        int scrollOffset = (int) ((selectedWidth + nextWidth) * 0.5f * offset);
+            // base scroll amount: places center of tab in center of parent
+            int scrollBase = selectedChild.getLeft() + selectedWidth / 2 - getWidth() / 2;
+            // offset amount: fraction of the distance between centers of tabs
+            int scrollOffset = (int) ((selectedWidth + nextWidth) * 0.5f * offset);
 
-        return (ViewCompat.getLayoutDirection(ScrollableTabLayout.this) == ViewCompat.LAYOUT_DIRECTION_LTR)
-                ? scrollBase + scrollOffset : scrollBase - scrollOffset;
-    }
+            return (ViewCompat.getLayoutDirection(ScrollableTabLayout.this) ==
+                    ViewCompat.LAYOUT_DIRECTION_LTR)
+                    ? scrollBase + scrollOffset : scrollBase - scrollOffset;
+        }
 
-    private void scrollToPosition(int position, float offset) {
-        scrollTo(calcScrollX(position, offset), 0);
+        private void scrollToPosition(int position, float offset) {
+            scrollTo(calcScrollX(position, offset), 0);
+        }
     }
 
     private OnTabSelectedListener mOnTabSelectedListener;
@@ -131,7 +142,6 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
 
         @Override
         public void onClick(View v) {
-            scrollToPosition(mPosition, 0);
             setCurrentItem(mPosition);
             if (mTabLayout.getViewPager() != null) {
                 mTabLayout.getViewPager().setCurrentItem(mPosition);

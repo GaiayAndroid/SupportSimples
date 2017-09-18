@@ -5,9 +5,22 @@
     android:orientation="vertical">
 
     <com.gaiay.library.tablayout.CommonTabLayout
-        android:id="@+id/tab_layout"
+        android:id="@+id/tab_layout1"
         android:layout_width="match_parent"
-        android:layout_height="50dp"/>
+        android:layout_height="50dp"
+        android:background="#999999" />
+
+    <com.gaiay.library.tablayout.CommonTabLayout
+        android:id="@+id/tab_layout2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#888888" />
+
+    <com.gaiay.library.tablayout.CommonTabLayout
+        android:id="@+id/tab_layout3"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#777777" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"

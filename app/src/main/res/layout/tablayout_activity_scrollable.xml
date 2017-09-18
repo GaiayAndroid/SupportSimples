@@ -7,7 +7,8 @@
     <com.gaiay.library.tablayout.ScrollableTabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"/>
+        android:layout_height="50dp"
+        android:background="#999999" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
