@@ -13,6 +13,9 @@ import com.gaiay.library.tablayout.indicator.TabIndicator;
 import com.gaiay.library.tablayout.listener.OnTabSelectedListener;
 
 /**
+ * 可以左右滚动的TabLayout
+ *
+ * @see CommonTabLayout
  * <p>Created by RenTao on 2017/9/17.
  */
 public class ScrollableTabLayout extends HorizontalScrollView implements ICommonTabLayout {

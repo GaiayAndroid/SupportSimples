@@ -58,7 +58,7 @@ public class CommonTabLayoutActivity extends AppCompatActivity {
 
     private void initFillTabLayout() {
         tabLayout1.setTabAdapter(new TitleTabAdapter(this, titles1));
-        StripTabIndicator indicator = new StripTabIndicator(StripTabIndicator.MODE_FILL);
+        StripTabIndicator indicator = new StripTabIndicator(this, StripTabIndicator.MODE_FILL);
         indicator.setIndicatorHeight(5);
         tabLayout1.setTabIndicator(indicator);
         tabLayout1.setViewPager(pager);
@@ -69,7 +69,7 @@ public class CommonTabLayoutActivity extends AppCompatActivity {
         TitleTabAdapter adapter = new TitleTabAdapter(this, titles2);
         adapter.setSelectedColor(Color.BLUE);
         tabLayout2.setTabAdapter(adapter);
-        StripTabIndicator indicator = new StripTabIndicator(StripTabIndicator.MODE_WRAP);
+        StripTabIndicator indicator = new StripTabIndicator(this, StripTabIndicator.MODE_WRAP);
         indicator.setIndicatorColor(Color.BLUE);
         tabLayout2.setTabIndicator(indicator);
         tabLayout2.setViewPager(pager);
@@ -80,7 +80,7 @@ public class CommonTabLayoutActivity extends AppCompatActivity {
         TitleTabAdapter adapter = new TitleTabAdapter(this, titles3);
         adapter.setTitleSize(11);
         tabLayout3.setTabAdapter(adapter);
-        StripTabIndicator indicator = new StripTabIndicator(StripTabIndicator.MODE_EXACTLY);
+        StripTabIndicator indicator = new StripTabIndicator(this, StripTabIndicator.MODE_EXACTLY);
         indicator.setIndicatorWidth(50);
         tabLayout3.setTabIndicator(indicator);
         tabLayout3.setViewPager(pager);

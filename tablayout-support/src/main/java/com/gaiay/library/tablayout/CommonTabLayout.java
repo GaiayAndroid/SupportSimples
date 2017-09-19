@@ -15,11 +15,26 @@ import com.gaiay.library.tablayout.listener.OnTabSelectedListener;
 
 /**
  * <pre>
- * tabLayout.setTabAdapter(TabAdapter);     // 设置Adapter，必须设置
- * tabLayout.setTabIndicator(TabIndicator); // 设置指示器，非必须
- * tabLayout.setViewPager(ViewPager);       // 设置ViewPager，非必须
- * tabLayout.setup();
+ *      tabLayout.setTabAdapter(TabAdapter);     // 设置Adapter，必须设置
+ *      tabLayout.setTabIndicator(TabIndicator); // 设置指示器，非必须
+ *      tabLayout.setViewPager(ViewPager);       // 设置ViewPager，非必须
+ *      tabLayout.setup();
  * </pre>
+ *
+ * <!--
+ * 如果在工程中使用了{@link com.gaiay.library.tablayout.adapter.TitleTabAdapter}或者{@link com.gaiay.library.tablayout.indicator.StripTabIndicator}，
+ * 并想要自定义样式，可以Application的theme增加如下配置
+ * <style name="AppTheme" parent="xxx">
+ *     <item name="tabLayoutTitleTextSize">14sp</item>              // 文字大小
+ *     <item name="tabLayoutTitlePadding">8dp</item>                // tab左右的padding
+ *     <item name="tabLayoutTitleSelectedColor">#ba0404</item>      // 选中时文字的颜色
+ *     <item name="tabLayoutTitleUnselectedColor">#323232</item>    // 未选中时文字的颜色
+ *
+ *     <item name="tabLayoutIndicatorStripColor">#ba0404</item>     // 指示器的颜色
+ *     <item name="tabLayoutIndicatorStripHeight">2dp</item>        // 指示器的高度
+ * </style>
+ * -->
+ *
  * <p>Created by RenTao on 2017/9/17.
  */
 public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {

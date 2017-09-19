@@ -44,7 +44,7 @@ public class ScrollableTabLayoutActivity extends AppCompatActivity {
         pager.setAdapter(new ViewPagerFragmentAdapter(getSupportFragmentManager(), fragments));
 
         tabLayout.setTabAdapter(new TitleTabAdapter(this, titles));
-        tabLayout.setTabIndicator(new StripTabIndicator(StripTabIndicator.MODE_WRAP));
+        tabLayout.setTabIndicator(new StripTabIndicator(this, StripTabIndicator.MODE_WRAP));
         tabLayout.setViewPager(pager);
         tabLayout.setup();
     }

@@ -6,6 +6,14 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="tabLayoutTitleTextSize">16sp</item>
+        <item name="tabLayoutTitlePadding">16dp</item>
+        <item name="tabLayoutTitleSelectedColor">#ba0404</item>
+        <item name="tabLayoutTitleUnselectedColor">#323232</item>
+
+        <item name="tabLayoutIndicatorStripColor">#ba0404</item>
+        <item name="tabLayoutIndicatorStripHeight">4dp</item>
     </style>
 
 </resources>

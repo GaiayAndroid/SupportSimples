@@ -36,11 +36,17 @@ public class TitleTabAdapter extends TabLayoutAdapter {
     @SuppressWarnings("ResourceType")
     private void parseAttrs() {
         final TypedArray typedArray = mContext.obtainStyledAttributes(ATTRS);
-        mTitleSize = typedArray.getDimensionPixelSize(0, 14);
+        // 获取title的textSize，并将px转换为sp
+        mTitleSize = typedArray.getDimensionPixelSize(0, mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_title_text_size));
+        mTitleSize = px2sp(mTitleSize);
         mTabPadding = typedArray.getDimensionPixelSize(1, mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_title_padding));
         mSelectedColor = typedArray.getColor(2, ContextCompat.getColor(mContext, R.color.tab_layout_title_selected_color));
         mUnselectedColor = typedArray.getColor(3, ContextCompat.getColor(mContext, R.color.tab_layout_title_unselected_color));
         typedArray.recycle();
+    }
+
+    private int px2sp(float pxValue) {
+        return (int) (pxValue / mContext.getResources().getDisplayMetrics().scaledDensity + 0.5f);
     }
 
     @Override

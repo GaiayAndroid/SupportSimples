@@ -1,13 +1,16 @@
 package com.gaiay.library.tablayout.indicator;
 
+import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.IntDef;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.gaiay.library.tablayout.CommonTabLayout;
+import com.rent.tablayout_support.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -23,39 +26,32 @@ public class StripTabIndicator extends TabIndicator {
     /** 指定宽度 */
     public static final int MODE_EXACTLY = 3;
 
+    private static final int[] ATTRS = { R.attr.tabLayoutIndicatorStripColor, R.attr.tabLayoutIndicatorStripHeight };
+
     @IntDef({ MODE_FILL, MODE_WRAP, MODE_EXACTLY })
     @Retention(RetentionPolicy.SOURCE)
     @interface Mode {}
 
     private Paint mPaint;
     private Rect mRect;
-    private int mIndicatorColor = Color.RED,
-                mIndicatorHeight = 10,
-                mIndicatorWidth;
-    private int mMode;
+    private int mMode, mIndicatorColor, mIndicatorHeight, mIndicatorWidth;
 
-    public StripTabIndicator() {
-        this(MODE_FILL);
+    public StripTabIndicator(Context context) {
+        this(context, MODE_FILL);
     }
 
-    public StripTabIndicator(@Mode int mode) {
+    public StripTabIndicator(Context context, @Mode int mode) {
         this.mMode = mode;
+
+        parseAttrs(context);
     }
 
-    public void setMode(@Mode int mode) {
-        this.mMode = mode;
-    }
-
-    public void setIndicatorColor(int color) {
-        this.mIndicatorColor = color;
-    }
-
-    public void setIndicatorHeight(int height) {
-        this.mIndicatorHeight = height;
-    }
-
-    public void setIndicatorWidth(int width) {
-        this.mIndicatorWidth = width;
+    @SuppressWarnings("ResourceType")
+    private void parseAttrs(Context context) {
+        final TypedArray typedArray = context.obtainStyledAttributes(ATTRS);
+        mIndicatorColor = typedArray.getColor(0, ContextCompat.getColor(context, R.color.tab_layout_indicator_strip_color));
+        mIndicatorHeight = typedArray.getDimensionPixelSize(1, context.getResources().getDimensionPixelSize(R.dimen.tab_layout_indicator_strip_height));
+        typedArray.recycle();
     }
 
     @Override
@@ -112,5 +108,21 @@ public class StripTabIndicator extends TabIndicator {
             rect.right = (int) (rect.left + currentActualWidth + actualOffset);
         }
         return rect;
+    }
+
+    public void setMode(@Mode int mode) {
+        this.mMode = mode;
+    }
+
+    public void setIndicatorColor(int color) {
+        this.mIndicatorColor = color;
+    }
+
+    public void setIndicatorHeight(int height) {
+        this.mIndicatorHeight = height;
+    }
+
+    public void setIndicatorWidth(int width) {
+        this.mIndicatorWidth = width;
     }
 }
