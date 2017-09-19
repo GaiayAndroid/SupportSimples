@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CommonTabLayoutTabTitle">
+        <attr name="tabLayoutTitleTextSize" format="dimension|reference" />
+        <attr name="tabLayoutTitlePadding" format="dimension|reference" />
+        <attr name="tabLayoutTitleSelectedColor" format="color|reference" />
+        <attr name="tabLayoutTitleUnselectedColor" format="color|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="CommonTabLayoutTabIndicator">
+        <attr name="tabLayoutIndicatorStripColor" format="color|reference" />
+        <attr name="tabLayoutIndicatorStripHeight" format="dimension|reference" />
+    </declare-styleable>
+</resources>
