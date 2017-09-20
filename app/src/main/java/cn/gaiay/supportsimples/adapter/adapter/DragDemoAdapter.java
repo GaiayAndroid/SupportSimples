@@ -43,6 +43,15 @@ public class DragDemoAdapter extends DraggableAdapter<String> {
 
     @Override
     protected void convert(ViewHolder helper, String item) {
-        helper.setText(R.id.text, item);
+        if (isDraggedItemDraggable(helper.getLayoutPosition())) {
+            helper.setText(R.id.text, item);
+        } else {
+            helper.setText(R.id.text, item + " cannot drag");
+        }
+    }
+
+    @Override
+    public boolean isDraggedItemDraggable(int position) {
+        return position >= 2;
     }
 }

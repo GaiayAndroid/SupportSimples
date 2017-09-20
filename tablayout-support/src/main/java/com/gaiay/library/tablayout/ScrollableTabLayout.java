@@ -1,6 +1,7 @@
 package com.gaiay.library.tablayout;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -11,6 +12,7 @@ import android.widget.HorizontalScrollView;
 import com.gaiay.library.tablayout.adapter.TabLayoutAdapter;
 import com.gaiay.library.tablayout.indicator.TabIndicator;
 import com.gaiay.library.tablayout.listener.OnTabSelectedListener;
+import com.rent.tablayout_support.R;
 
 /**
  * 可以左右滚动的TabLayout
@@ -20,6 +22,7 @@ import com.gaiay.library.tablayout.listener.OnTabSelectedListener;
  */
 public class ScrollableTabLayout extends HorizontalScrollView implements ICommonTabLayout {
     private CommonTabLayout mTabLayout;
+    private int mTabSpacing;
 
     public ScrollableTabLayout(Context context) {
         this(context, null);
@@ -31,12 +34,21 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
 
     public ScrollableTabLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        parseAttrs(attrs);
         initViews();
+    }
+
+    private void parseAttrs(AttributeSet attrs) {
+        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.CommonTabLayout);
+        mTabSpacing = typedArray.getDimensionPixelSize(R.styleable.CommonTabLayout_tabLayoutSpacing, 0);
+        typedArray.recycle();
     }
 
     private void initViews() {
         mTabLayout = new CommonTabLayout(getContext());
         mTabLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mTabLayout.setTabSpacing(mTabSpacing);
         setHorizontalScrollBarEnabled(false);
         addView(mTabLayout);
     }
@@ -54,6 +66,11 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
     @Override
     public void setViewPager(ViewPager viewPager) {
         mTabLayout.setViewPager(viewPager);
+    }
+
+    @Override
+    public void setTabSpacing(int spacing) {
+        mTabLayout.setTabSpacing(spacing);
     }
 
     @Override
@@ -113,11 +130,12 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
 
             final int selectedWidth = selectedChild.getWidth();
             final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
+            final int leftMargin = nextChild != null ? ((ViewGroup.MarginLayoutParams) nextChild.getLayoutParams()).leftMargin : 0;
 
             // base scroll amount: places center of tab in center of parent
             int scrollBase = selectedChild.getLeft() + selectedWidth / 2 - getWidth() / 2;
             // offset amount: fraction of the distance between centers of tabs
-            int scrollOffset = (int) ((selectedWidth + nextWidth) * 0.5f * offset);
+            int scrollOffset = (int) ((selectedWidth + nextWidth + 2 * leftMargin) * 0.5f * offset);
 
             return (ViewCompat.getLayoutDirection(ScrollableTabLayout.this) ==
                     ViewCompat.LAYOUT_DIRECTION_LTR)

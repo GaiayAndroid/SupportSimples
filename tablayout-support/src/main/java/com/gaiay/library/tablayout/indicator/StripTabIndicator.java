@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.gaiay.library.tablayout.CommonTabLayout;
 import com.rent.tablayout_support.R;
@@ -85,8 +86,10 @@ public class StripTabIndicator extends TabIndicator {
         rect.top = selectedChild.getHeight() - mIndicatorHeight;
         rect.bottom = selectedChild.getHeight();
 
+        final int leftMargin = nextChild != null ? ((ViewGroup.MarginLayoutParams) nextChild.getLayoutParams()).leftMargin : 0;
         // tab.left = 左侧的边距 + tab宽度变化的偏移量 * 0.5
-        final int left = selectedChild.getLeft() + (int) ((selectedWidth + nextWidth) * positionOffset * 0.5f);
+        // ((selectedWidth + nextWidth + 2 * leftMargin) * positionOffset * 0.5f = ((selectedWidth + nextWidth) * positionOffset * 0.5f + leftMargin * positionOffset
+        final int left = selectedChild.getLeft() + (int) ((selectedWidth + nextWidth + 2 * leftMargin) * positionOffset * 0.5f);
 
         if (mMode == MODE_FILL) {
             rect.left = left;

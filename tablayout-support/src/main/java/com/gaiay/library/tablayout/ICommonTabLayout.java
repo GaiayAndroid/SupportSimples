@@ -17,6 +17,8 @@ interface ICommonTabLayout {
 
     void setViewPager(ViewPager viewPager);
 
+    void setTabSpacing(int spacing);
+
     void setup();
 
     void notifyDataSetChanged();

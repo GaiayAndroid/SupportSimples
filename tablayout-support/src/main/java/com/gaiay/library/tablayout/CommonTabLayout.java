@@ -1,6 +1,7 @@
 package com.gaiay.library.tablayout;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import com.gaiay.library.tablayout.adapter.TabLayoutAdapter;
 import com.gaiay.library.tablayout.indicator.TabIndicator;
 import com.gaiay.library.tablayout.listener.OnTabSelectedListener;
+import com.rent.tablayout_support.R;
 
 /**
  * <pre>
@@ -42,6 +44,7 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
     private TabIndicator mIndicator;
     private ViewPager mViewPager;
     private int mCurrentItem;
+    private int mTabSpacing;
 
     public CommonTabLayout(Context context) {
         this(context, null);
@@ -53,7 +56,15 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
 
     public CommonTabLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        parseAttrs(attrs);
         initViews();
+    }
+
+    private void parseAttrs(AttributeSet attrs) {
+        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.CommonTabLayout);
+        mTabSpacing = typedArray.getDimensionPixelSize(R.styleable.CommonTabLayout_tabLayoutSpacing, 0);
+        typedArray.recycle();
     }
 
     private void initViews() {
@@ -76,6 +87,11 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
         this.mViewPager = viewPager;
     }
 
+    @Override
+    public void setTabSpacing(int spacing) {
+        this.mTabSpacing = spacing;
+    }
+
     public TabLayoutAdapter getAdapter() {
         return mAdapter;
     }
@@ -86,6 +102,10 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
 
     public ViewPager getViewPager() {
         return mViewPager;
+    }
+
+    public int getTabSpacing() {
+        return mTabSpacing;
     }
 
     @Override
@@ -113,6 +133,9 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
                 params.width = 0;
                 params.weight = 1;
             }
+            if (i > 0 && mTabSpacing != 0) {
+                params.leftMargin = mTabSpacing;
+            }
             v.setLayoutParams(params);
             v.setPadding(0, getPaddingTop(), 0, getPaddingBottom());
             v.setOnClickListener(new OnTabClickListener(i));
@@ -125,6 +148,9 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
         this.mCurrentItem = position;
         for (int i = 0; i < getChildCount(); i++) {
             mAdapter.onSelected(getChildAt(i), position == i);
+        }
+        if (mIndicator != null && mViewPager == null) {
+            mIndicator.scroll(getCurrentItem(), 0, this);
         }
     }
 

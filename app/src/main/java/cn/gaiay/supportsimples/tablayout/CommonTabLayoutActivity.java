@@ -63,6 +63,12 @@ public class CommonTabLayoutActivity extends AppCompatActivity {
         tabLayout1.setTabIndicator(indicator);
         tabLayout1.setViewPager(pager);
         tabLayout1.setup();
+//        tabLayout1.setOnTabSelectedListener(new OnTabSelectedListener() {
+//            @Override
+//            public void onSelected(int position) {
+//                pager.setCurrentItem(position);
+//            }
+//        });
     }
 
     private void initWrapTabLayout() {
