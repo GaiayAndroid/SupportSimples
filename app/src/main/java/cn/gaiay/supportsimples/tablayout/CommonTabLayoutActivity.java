@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.gaiay.library.tablayout.CommonTabLayout;
 import com.gaiay.library.tablayout.adapter.TitleTabAdapter;
 import com.gaiay.library.tablayout.indicator.StripTabIndicator;
+import com.gaiay.library.tablayout.listener.OnTabSelectedListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,21 +62,21 @@ public class CommonTabLayoutActivity extends AppCompatActivity {
         StripTabIndicator indicator = new StripTabIndicator(this, StripTabIndicator.MODE_FILL);
         indicator.setIndicatorHeight(5);
         tabLayout1.setTabIndicator(indicator);
-        tabLayout1.setViewPager(pager);
+//        tabLayout1.setViewPager(pager);
         tabLayout1.setup();
-//        tabLayout1.setOnTabSelectedListener(new OnTabSelectedListener() {
-//            @Override
-//            public void onSelected(int position) {
-//                pager.setCurrentItem(position);
-//            }
-//        });
+        tabLayout1.setOnTabSelectedListener(new OnTabSelectedListener() {
+            @Override
+            public void onSelected(int position) {
+                pager.setCurrentItem(position);
+            }
+        });
     }
 
     private void initWrapTabLayout() {
         TitleTabAdapter adapter = new TitleTabAdapter(this, titles2);
         adapter.setSelectedColor(Color.BLUE);
         tabLayout2.setTabAdapter(adapter);
-        StripTabIndicator indicator = new StripTabIndicator(this, StripTabIndicator.MODE_WRAP);
+        StripTabIndicator indicator = new StripTabIndicator(this, StripTabIndicator.MODE_FILL);
         indicator.setIndicatorColor(Color.BLUE);
         tabLayout2.setTabIndicator(indicator);
         tabLayout2.setViewPager(pager);

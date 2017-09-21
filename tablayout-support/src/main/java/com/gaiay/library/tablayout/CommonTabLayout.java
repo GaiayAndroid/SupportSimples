@@ -1,5 +1,6 @@
 package com.gaiay.library.tablayout;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -8,6 +9,8 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 
 import com.gaiay.library.tablayout.adapter.TabLayoutAdapter;
@@ -40,11 +43,15 @@ import com.rent.tablayout_support.R;
  * <p>Created by RenTao on 2017/9/17.
  */
 public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
+    private static final Interpolator FAST_OUT_SLOW_IN_INTERPOLATOR = new LinearInterpolator();
+    private static final int ANIMATION_DURATION = 200;
+
     private TabLayoutAdapter mAdapter;
     private TabIndicator mIndicator;
     private ViewPager mViewPager;
     private int mCurrentItem;
     private int mTabSpacing;
+    private ValueAnimator mAnimator;
 
     public CommonTabLayout(Context context) {
         this(context, null);
@@ -145,12 +152,53 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
 
     @Override
     public void setCurrentItem(int position) {
+        if (mAnimator != null && mAnimator.isRunning()) {
+            return;
+        }
+        if (mIndicator != null && mViewPager == null) {
+            onSelected(position);
+        }
         this.mCurrentItem = position;
         for (int i = 0; i < getChildCount(); i++) {
             mAdapter.onSelected(getChildAt(i), position == i);
         }
-        if (mIndicator != null && mViewPager == null) {
-            mIndicator.scroll(getCurrentItem(), 0, this);
+    }
+
+    private void onSelected(final int position) {
+        if (mCurrentItem == position) {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    mIndicator.scroll(position, 0, CommonTabLayout.this);
+                }
+            });
+            return;
+        }
+        if (mAnimator == null) {
+            mAnimator = new ValueAnimator();
+            mAnimator.setInterpolator(FAST_OUT_SLOW_IN_INTERPOLATOR);
+            mAnimator.setDuration(ANIMATION_DURATION);
+        }
+        if (mCurrentItem > position) {
+            mAnimator.setFloatValues(1, 0);
+            mAnimator.addUpdateListener(new IndicatorAnimatorListener(position));
+        } else {
+            mAnimator.setFloatValues(0, 1);
+            mAnimator.addUpdateListener(new IndicatorAnimatorListener(position - 1));
+        }
+        mAnimator.start();
+    }
+
+    private class IndicatorAnimatorListener implements ValueAnimator.AnimatorUpdateListener {
+        int mPosition;
+
+        IndicatorAnimatorListener(int position) {
+            this.mPosition = position;
+        }
+
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            mIndicator.scroll(mPosition, (float) animation.getAnimatedValue(), CommonTabLayout.this);
         }
     }
 
@@ -163,6 +211,7 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            System.out.println("position = [" + position + "], positionOffset = [" + positionOffset + "], positionOffsetPixels = [" + positionOffsetPixels + "]");
             if (mIndicator != null) {
                 mIndicator.scroll(position, positionOffset, CommonTabLayout.this);
             }
