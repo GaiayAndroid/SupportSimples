@@ -1,5 +1,6 @@
 package com.gaiay.library.tablayout;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v4.view.ViewCompat;
@@ -12,6 +13,7 @@ import android.widget.HorizontalScrollView;
 import com.gaiay.library.tablayout.adapter.TabLayoutAdapter;
 import com.gaiay.library.tablayout.indicator.TabIndicator;
 import com.gaiay.library.tablayout.listener.OnTabSelectedListener;
+import com.gaiay.library.tablayout.utils.AnimationUtils;
 import com.rent.tablayout_support.R;
 
 /**
@@ -23,6 +25,7 @@ import com.rent.tablayout_support.R;
 public class ScrollableTabLayout extends HorizontalScrollView implements ICommonTabLayout {
     private CommonTabLayout mTabLayout;
     private int mTabSpacing;
+    private ValueAnimator mScrollAnimator;
 
     public ScrollableTabLayout(Context context) {
         this(context, null);
@@ -85,7 +88,13 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
     public void notifyDataSetChanged() {
         mTabLayout.removeAllViews();
         initTabs();
-        setCurrentItem(0);
+        post(new Runnable() {
+
+            @Override
+            public void run() {
+                setCurrentItem(0);
+            }
+        });
     }
 
     private void initTabs() {
@@ -98,6 +107,9 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
 
     @Override
     public void setCurrentItem(int position) {
+        if (mTabLayout.getViewPager() == null) {
+            scrollToPosition(position);
+        }
         mTabLayout.setCurrentItem(position);
     }
 
@@ -123,27 +135,51 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
 
         @Override
         public void onPageScrollStateChanged(int state) {}
+    }
 
-        private int calcScrollX(int position, float offset) {
-            final View selectedChild = mTabLayout.getChildAt(position);
-            final View nextChild = position + 1 < mTabLayout.getChildCount() ? mTabLayout.getChildAt(position + 1) : null;
+    private int calcScrollX(int position, float offset) {
+        final View selectedChild = mTabLayout.getChildAt(position);
+        final View nextChild = position + 1 < mTabLayout.getChildCount() ? mTabLayout.getChildAt(position + 1) : null;
 
-            final int selectedWidth = selectedChild.getWidth();
-            final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
-            final int leftMargin = nextChild != null ? ((ViewGroup.MarginLayoutParams) nextChild.getLayoutParams()).leftMargin : 0;
+        final int selectedWidth = selectedChild.getWidth();
+        final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
+        final int leftMargin = nextChild != null ? ((ViewGroup.MarginLayoutParams) nextChild.getLayoutParams()).leftMargin : 0;
 
-            // base scroll amount: places center of tab in center of parent
-            int scrollBase = selectedChild.getLeft() + selectedWidth / 2 - getWidth() / 2;
-            // offset amount: fraction of the distance between centers of tabs
-            int scrollOffset = (int) ((selectedWidth + nextWidth + 2 * leftMargin) * 0.5f * offset);
+        // base scroll amount: places center of tab in center of parent
+        int scrollBase = selectedChild.getLeft() + selectedWidth / 2 - getWidth() / 2;
+        // offset amount: fraction of the distance between centers of tabs
+        int scrollOffset = (int) ((selectedWidth + nextWidth + 2 * leftMargin) * 0.5f * offset);
 
-            return (ViewCompat.getLayoutDirection(ScrollableTabLayout.this) ==
-                    ViewCompat.LAYOUT_DIRECTION_LTR)
-                    ? scrollBase + scrollOffset : scrollBase - scrollOffset;
+        return (ViewCompat.getLayoutDirection(ScrollableTabLayout.this) ==
+                ViewCompat.LAYOUT_DIRECTION_LTR)
+                ? scrollBase + scrollOffset : scrollBase - scrollOffset;
+    }
+
+    private void scrollToPosition(int position, float offset) {
+        scrollTo(calcScrollX(position, offset), 0);
+    }
+
+    private void scrollToPosition(int position) {
+        if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+            return;
         }
+        if (mScrollAnimator == null) {
+            mScrollAnimator = new ValueAnimator();
+            mScrollAnimator.setInterpolator(AnimationUtils.LINEAR_INTERPOLATOR);
+            mScrollAnimator.setDuration(CommonTabLayout.ANIMATION_DURATION);
+            mScrollAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
-        private void scrollToPosition(int position, float offset) {
-            scrollTo(calcScrollX(position, offset), 0);
+                @Override
+                public void onAnimationUpdate(ValueAnimator animator) {
+                    scrollTo((int) animator.getAnimatedValue(), 0);
+                }
+            });
+        }
+        final int from = getScrollX();
+        final int to = calcScrollX(position, 0);
+        if (from != to) {
+            mScrollAnimator.setIntValues(from, to);
+            mScrollAnimator.start();
         }
     }
 

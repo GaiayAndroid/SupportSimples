@@ -9,13 +9,12 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 
 import com.gaiay.library.tablayout.adapter.TabLayoutAdapter;
 import com.gaiay.library.tablayout.indicator.TabIndicator;
 import com.gaiay.library.tablayout.listener.OnTabSelectedListener;
+import com.gaiay.library.tablayout.utils.AnimationUtils;
 import com.rent.tablayout_support.R;
 
 /**
@@ -43,8 +42,7 @@ import com.rent.tablayout_support.R;
  * <p>Created by RenTao on 2017/9/17.
  */
 public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
-    private static final Interpolator FAST_OUT_SLOW_IN_INTERPOLATOR = new LinearInterpolator();
-    private static final int ANIMATION_DURATION = 200;
+    public static final int ANIMATION_DURATION = 200;
 
     private TabLayoutAdapter mAdapter;
     private TabIndicator mIndicator;
@@ -127,7 +125,13 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
     public void notifyDataSetChanged() {
         removeAllViews();
         initTabs();
-        setCurrentItem(0);
+        post(new Runnable() {
+
+            @Override
+            public void run() {
+                setCurrentItem(0);
+            }
+        });
     }
 
     private void initTabs() {
@@ -152,9 +156,6 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
 
     @Override
     public void setCurrentItem(int position) {
-        if (mAnimator != null && mAnimator.isRunning()) {
-            return;
-        }
         if (mIndicator != null && mViewPager == null) {
             onSelected(position);
         }
@@ -165,20 +166,21 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
     }
 
     private void onSelected(final int position) {
+        if (mAnimator != null && mAnimator.isRunning()) {
+            return;
+        }
         if (mCurrentItem == position) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    mIndicator.scroll(position, 0, CommonTabLayout.this);
-                }
-            });
+            mIndicator.scroll(position, 0, CommonTabLayout.this);
             return;
         }
         if (mAnimator == null) {
             mAnimator = new ValueAnimator();
-            mAnimator.setInterpolator(FAST_OUT_SLOW_IN_INTERPOLATOR);
+            mAnimator.setInterpolator(AnimationUtils.LINEAR_INTERPOLATOR);
             mAnimator.setDuration(ANIMATION_DURATION);
         }
+        // 这里是模拟ViewPager的OnPageChangeListener#onPageScrolled回调方法
+        // 当4滑动到2，position是2，positionOffset是从1到0
+        // 当2滑动到4，position是4 - 1，positionOffset是从0到1
         if (mCurrentItem > position) {
             mAnimator.setFloatValues(1, 0);
             mAnimator.addUpdateListener(new IndicatorAnimatorListener(position));
@@ -211,7 +213,6 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            System.out.println("position = [" + position + "], positionOffset = [" + positionOffset + "], positionOffsetPixels = [" + positionOffsetPixels + "]");
             if (mIndicator != null) {
                 mIndicator.scroll(position, positionOffset, CommonTabLayout.this);
             }
