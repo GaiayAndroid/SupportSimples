@@ -19,6 +19,8 @@ interface ICommonTabLayout {
 
     void setTabSpacing(int spacing);
 
+    void setTabBorder(int height, int color);
+
     void setup();
 
     void notifyDataSetChanged();

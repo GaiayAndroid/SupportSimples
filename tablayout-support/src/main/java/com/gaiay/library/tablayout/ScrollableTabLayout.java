@@ -24,7 +24,7 @@ import com.rent.tablayout_support.R;
  */
 public class ScrollableTabLayout extends HorizontalScrollView implements ICommonTabLayout {
     private CommonTabLayout mTabLayout;
-    private int mTabSpacing;
+    private int mTabSpacing, mTabBorderHeight, mTabBorderColor;
     private ValueAnimator mScrollAnimator;
 
     public ScrollableTabLayout(Context context) {
@@ -45,6 +45,8 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
     private void parseAttrs(AttributeSet attrs) {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.CommonTabLayout);
         mTabSpacing = typedArray.getDimensionPixelSize(R.styleable.CommonTabLayout_tabLayoutSpacing, 0);
+        mTabBorderHeight = typedArray.getDimensionPixelSize(R.styleable.CommonTabLayout_tabLayoutBorderHeight, 0);
+        mTabBorderColor = typedArray.getColor(R.styleable.CommonTabLayout_tabLayoutBorderColor, 0);
         typedArray.recycle();
     }
 
@@ -52,6 +54,7 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
         mTabLayout = new CommonTabLayout(getContext());
         mTabLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mTabLayout.setTabSpacing(mTabSpacing);
+        mTabLayout.setTabBorder(mTabBorderHeight, mTabBorderColor);
         setHorizontalScrollBarEnabled(false);
         addView(mTabLayout);
     }
@@ -74,6 +77,11 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
     @Override
     public void setTabSpacing(int spacing) {
         mTabLayout.setTabSpacing(spacing);
+    }
+
+    @Override
+    public void setTabBorder(int height, int color) {
+        mTabLayout.setTabBorder(height, color);
     }
 
     @Override

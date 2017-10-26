@@ -14,5 +14,7 @@
     
     <declare-styleable name="CommonTabLayout">
         <attr name="tabLayoutSpacing" format="dimension|reference" />
+        <attr name="tabLayoutBorderColor" format="color|reference" />
+        <attr name="tabLayoutBorderHeight" format="dimension|reference" />
     </declare-styleable>
 </resources>

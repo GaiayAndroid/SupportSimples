@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -39,6 +40,9 @@ import com.rent.tablayout_support.R;
  * </style>
  * -->
  *
+ * 自定义属性：
+ * tabLayoutSpacing：tab的间距
+ *
  * <p>Created by RenTao on 2017/9/17.
  */
 public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
@@ -48,7 +52,7 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
     private TabIndicator mIndicator;
     private ViewPager mViewPager;
     private int mCurrentItem;
-    private int mTabSpacing;
+    private int mTabSpacing, mTabBorderHeight, mTabBorderColor;
     private ValueAnimator mAnimator;
 
     public CommonTabLayout(Context context) {
@@ -69,6 +73,8 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
     private void parseAttrs(AttributeSet attrs) {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.CommonTabLayout);
         mTabSpacing = typedArray.getDimensionPixelSize(R.styleable.CommonTabLayout_tabLayoutSpacing, 0);
+        mTabBorderHeight = typedArray.getDimensionPixelSize(R.styleable.CommonTabLayout_tabLayoutBorderHeight, 0);
+        mTabBorderColor = typedArray.getColor(R.styleable.CommonTabLayout_tabLayoutBorderColor, 0);
         typedArray.recycle();
     }
 
@@ -95,6 +101,12 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
     @Override
     public void setTabSpacing(int spacing) {
         this.mTabSpacing = spacing;
+    }
+
+    @Override
+    public void setTabBorder(int height, int color) {
+        this.mTabBorderHeight = height;
+        this.mTabBorderColor = color;
     }
 
     public TabLayoutAdapter getAdapter() {
@@ -253,9 +265,20 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
         }
     }
 
+    private Paint mBorderPaint;
+
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
+        if (mTabBorderHeight > 0 && mTabBorderColor != 0) {
+            if (mBorderPaint == null) {
+                mBorderPaint = new Paint();
+                mBorderPaint.setStyle(Paint.Style.FILL);
+                mBorderPaint.setStrokeWidth(1);
+                mBorderPaint.setColor(mTabBorderColor);
+            }
+            canvas.drawRect(0, getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight(), mBorderPaint);
+        }
         if (mIndicator != null) {
             mIndicator.onDraw(canvas);
         }
