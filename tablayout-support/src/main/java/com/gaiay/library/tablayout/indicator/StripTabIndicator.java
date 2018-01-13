@@ -36,6 +36,7 @@ public class StripTabIndicator extends TabIndicator {
     private Paint mPaint;
     private RectF mRect;
     private int mMode, mIndicatorColor, mIndicatorHeight, mIndicatorWidth, mIndicatorMargin;
+    private float mIndicatorHeightHalf;
 
     public StripTabIndicator(Context context) {
         this(context, MODE_FILL);
@@ -52,6 +53,7 @@ public class StripTabIndicator extends TabIndicator {
         final TypedArray typedArray = context.obtainStyledAttributes(ATTRS);
         mIndicatorColor = typedArray.getColor(0, ContextCompat.getColor(context, R.color.tab_layout_indicator_strip_color));
         mIndicatorHeight = typedArray.getDimensionPixelSize(1, context.getResources().getDimensionPixelSize(R.dimen.tab_layout_indicator_strip_height));
+        setIndicatorHeight(mIndicatorHeight);
         typedArray.recycle();
     }
 
@@ -59,10 +61,12 @@ public class StripTabIndicator extends TabIndicator {
     public void onDraw(Canvas c) {
         if (mPaint == null) {
             mPaint = new Paint();
+            mPaint.setAntiAlias(true);
             mPaint.setColor(mIndicatorColor);
+            mPaint.setStrokeCap(Paint.Cap.ROUND);
             mPaint.setStrokeWidth(mIndicatorHeight);
         }
-        c.drawRect(mRect, mPaint);
+        c.drawLine(mRect.left, mRect.bottom, mRect.right, mRect.bottom, mPaint);
     }
 
     @Override
@@ -83,8 +87,10 @@ public class StripTabIndicator extends TabIndicator {
         final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
 
         RectF rect = new RectF();
-        rect.top = tabLayout.getHeight() - mIndicatorHeight - mIndicatorMargin;
-        rect.bottom = tabLayout.getHeight() - mIndicatorMargin;
+        // 改成了drawLine，不需要top属性
+//        rect.top = tabLayout.getHeight() - mIndicatorHeight - mIndicatorMargin;
+        // 之所以减去mIndicatorHeightHalf，是因为画线的时候，是从线的中间坐标开始画
+        rect.bottom = tabLayout.getHeight() - mIndicatorMargin - mIndicatorHeightHalf;
 
         final int leftMargin = nextChild != null ? ((ViewGroup.MarginLayoutParams) nextChild.getLayoutParams()).leftMargin : 0;
         // tab.left = 左侧的边距 + tab宽度变化的偏移量 * 0.5
@@ -123,6 +129,7 @@ public class StripTabIndicator extends TabIndicator {
 
     public void setIndicatorHeight(int height) {
         this.mIndicatorHeight = height;
+        this.mIndicatorHeightHalf = (float) mIndicatorHeight / 2;
     }
 
     public void setIndicatorWidth(int width) {
