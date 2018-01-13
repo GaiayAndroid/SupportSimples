@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.RectF;
 import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -34,8 +34,8 @@ public class StripTabIndicator extends TabIndicator {
     @interface Mode {}
 
     private Paint mPaint;
-    private Rect mRect;
-    private int mMode, mIndicatorColor, mIndicatorHeight, mIndicatorWidth;
+    private RectF mRect;
+    private int mMode, mIndicatorColor, mIndicatorHeight, mIndicatorWidth, mIndicatorMargin;
 
     public StripTabIndicator(Context context) {
         this(context, MODE_FILL);
@@ -67,7 +67,7 @@ public class StripTabIndicator extends TabIndicator {
 
     @Override
     protected boolean onScrolled(int position, float positionOffset, CommonTabLayout tabLayout) {
-        Rect rect =  buildRect(position, positionOffset, tabLayout);
+        RectF rect =  buildRect(position, positionOffset, tabLayout);
         if (mRect != null && rect != null && mRect.equals(rect)) {
             return false;
         }
@@ -75,16 +75,16 @@ public class StripTabIndicator extends TabIndicator {
         return true;
     }
 
-    private Rect buildRect(int position, float positionOffset, CommonTabLayout tabLayout) {
+    private RectF buildRect(int position, float positionOffset, CommonTabLayout tabLayout) {
         final View selectedChild = tabLayout.getChildAt(position);
         final View nextChild = position + 1 < tabLayout.getChildCount() ? tabLayout.getChildAt(position + 1) : null;
 
         final int selectedWidth = selectedChild.getWidth();
         final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
 
-        Rect rect = new Rect();
-        rect.top = selectedChild.getHeight() - mIndicatorHeight;
-        rect.bottom = selectedChild.getHeight();
+        RectF rect = new RectF();
+        rect.top = tabLayout.getHeight() - mIndicatorHeight - mIndicatorMargin;
+        rect.bottom = tabLayout.getHeight() - mIndicatorMargin;
 
         final int leftMargin = nextChild != null ? ((ViewGroup.MarginLayoutParams) nextChild.getLayoutParams()).leftMargin : 0;
         // tab.left = 左侧的边距 + tab宽度变化的偏移量 * 0.5
@@ -127,5 +127,9 @@ public class StripTabIndicator extends TabIndicator {
 
     public void setIndicatorWidth(int width) {
         this.mIndicatorWidth = width;
+    }
+
+    public void setIndicatorMargin(int size) {
+        this.mIndicatorMargin = size;
     }
 }

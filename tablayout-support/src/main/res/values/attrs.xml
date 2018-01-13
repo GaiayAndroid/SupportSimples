@@ -14,6 +14,10 @@
     
     <declare-styleable name="CommonTabLayout">
         <attr name="tabLayoutSpacing" format="dimension|reference" />
+        <attr name="tabLayoutMode" format="enum">
+            <enum name="fill" value="0"/>
+            <enum name="wrap" value="1"/>
+        </attr>
         <attr name="tabLayoutBorderColor" format="color|reference" />
         <attr name="tabLayoutBorderHeight" format="dimension|reference" />
     </declare-styleable>

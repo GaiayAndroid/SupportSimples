@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.support.annotation.IntDef;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -17,6 +18,9 @@ import com.gaiay.library.tablayout.indicator.TabIndicator;
 import com.gaiay.library.tablayout.listener.OnTabSelectedListener;
 import com.gaiay.library.tablayout.utils.AnimationUtils;
 import com.rent.tablayout_support.R;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * <pre>
@@ -48,10 +52,24 @@ import com.rent.tablayout_support.R;
 public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
     public static final int ANIMATION_DURATION = 200;
 
+    /**
+     * Tab平分空间
+     */
+    public static final int MODE_FILL = 0;
+    /**
+     * Tab包裹内容
+     */
+    public static final int MODE_WRAP = 1;
+
+    @IntDef(value = {MODE_FILL, MODE_WRAP})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface TabMode {}
+
     private TabLayoutAdapter mAdapter;
     private TabIndicator mIndicator;
     private ViewPager mViewPager;
     private int mCurrentItem;
+    private @TabMode int mTabMode;
     private int mTabSpacing, mTabBorderHeight, mTabBorderColor;
     private ValueAnimator mAnimator;
 
@@ -73,6 +91,7 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
     private void parseAttrs(AttributeSet attrs) {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.CommonTabLayout);
         mTabSpacing = typedArray.getDimensionPixelSize(R.styleable.CommonTabLayout_tabLayoutSpacing, 0);
+        mTabMode = typedArray.getInt(R.styleable.CommonTabLayout_tabLayoutMode, MODE_FILL);
         mTabBorderHeight = typedArray.getDimensionPixelSize(R.styleable.CommonTabLayout_tabLayoutBorderHeight, 0);
         mTabBorderColor = typedArray.getColor(R.styleable.CommonTabLayout_tabLayoutBorderColor, 0);
         typedArray.recycle();
@@ -103,6 +122,10 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
         this.mTabSpacing = spacing;
     }
 
+    public void setTabMode(@TabMode int mode) {
+        this.mTabMode = mode;
+    }
+
     @Override
     public void setTabBorder(int height, int color) {
         this.mTabBorderHeight = height;
@@ -125,37 +148,44 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
         return mTabSpacing;
     }
 
+    public @TabMode int getTabMode() {
+        return mTabMode;
+    }
+
     @Override
     public void setup() {
         if (mViewPager != null) {
             mViewPager.addOnPageChangeListener(new TabPageChangeListener());
         }
-        notifyDataSetChanged();
+        notifyDataSetChanged(mCurrentItem);
     }
 
-    @Override
-    public void notifyDataSetChanged() {
+    private void notifyDataSetChanged(final int index) {
         removeAllViews();
         initTabs();
         post(new Runnable() {
 
             @Override
             public void run() {
-                setCurrentItem(0);
+                setCurrentItem(index);
             }
         });
     }
 
+    @Override
+    public void notifyDataSetChanged() {
+        notifyDataSetChanged(0);
+    }
+
     private void initTabs() {
+        mAdapter.onPrepare(this);
         for (int i = 0; i < mAdapter.getCount(); i++) {
             View v = mAdapter.getTabView(this, i);
             LayoutParams params = (LayoutParams) v.getLayoutParams();
             if (params == null) {
-                params = new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
-            } else {
-                params.width = 0;
-                params.weight = 1;
+                params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             }
+            buildLayoutParams(params);
             if (i > 0 && mTabSpacing != 0) {
                 params.leftMargin = mTabSpacing;
             }
@@ -163,6 +193,16 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
             v.setPadding(0, getPaddingTop(), 0, getPaddingBottom());
             v.setOnClickListener(new OnTabClickListener(i));
             addView(v);
+        }
+    }
+
+    private void buildLayoutParams(LayoutParams params) {
+        if (mTabMode == MODE_FILL) {
+            params.width = 0;
+            params.weight = 1;
+        }
+        else if (mTabMode == MODE_WRAP) {
+            // do nothing
         }
     }
 

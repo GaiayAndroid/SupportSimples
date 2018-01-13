@@ -89,23 +89,28 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
         if (mTabLayout.getViewPager() != null) {
             mTabLayout.getViewPager().addOnPageChangeListener(new ScrollPageChangeListener());
         }
-        notifyDataSetChanged();
+        notifyDataSetChanged(getCurrentItem());
     }
 
-    @Override
-    public void notifyDataSetChanged() {
+    private void notifyDataSetChanged(final int index) {
         mTabLayout.removeAllViews();
         initTabs();
         post(new Runnable() {
 
             @Override
             public void run() {
-                setCurrentItem(0);
+                setCurrentItem(index);
             }
         });
     }
 
+    @Override
+    public void notifyDataSetChanged() {
+        notifyDataSetChanged(0);
+    }
+
     private void initTabs() {
+        mTabLayout.getAdapter().onPrepare(this);
         for (int i = 0; i < mTabLayout.getAdapter().getCount(); i++) {
             View v = mTabLayout.getAdapter().getTabView(this, i);
             v.setOnClickListener(new OnTabClickListener(i));
@@ -151,7 +156,7 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
 
         final int selectedWidth = selectedChild.getWidth();
         final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
-        final int leftMargin = nextChild != null ? ((ViewGroup.MarginLayoutParams) nextChild.getLayoutParams()).leftMargin : 0;
+        final int leftMargin = nextChild != null ? ((MarginLayoutParams) nextChild.getLayoutParams()).leftMargin : 0;
 
         // base scroll amount: places center of tab in center of parent
         int scrollBase = selectedChild.getLeft() + selectedWidth / 2 - getWidth() / 2;

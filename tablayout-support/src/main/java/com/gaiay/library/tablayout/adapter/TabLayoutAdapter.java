@@ -8,6 +8,7 @@ import android.view.ViewGroup;
  */
 
 public abstract class TabLayoutAdapter {
+    public abstract void onPrepare(ViewGroup parent);
 
     public abstract View getTabView(ViewGroup parent, int position);
 
