@@ -224,7 +224,7 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
         if (mAnimator != null && mAnimator.isRunning()) {
             return;
         }
-        if (mCurrentItem == position) {
+        if (mCurrentItem == position || mCurrentItem < 0) {
             mIndicator.scroll(position, 0, CommonTabLayout.this);
             return;
         }
