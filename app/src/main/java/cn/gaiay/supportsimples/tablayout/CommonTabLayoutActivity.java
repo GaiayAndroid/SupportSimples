@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.gaiay.library.tablayout.CommonTabLayout;
 import com.gaiay.library.tablayout.adapter.TitleTabAdapter;
@@ -61,7 +63,7 @@ public class CommonTabLayoutActivity extends AppCompatActivity {
         StripTabIndicator indicator = new StripTabIndicator(this, StripTabIndicator.MODE_FILL);
         indicator.setIndicatorHeight(5);
         tabLayout1.setTabIndicator(indicator);
-        tabLayout1.setViewPager(pager);
+//        tabLayout1.setViewPager(pager);
         tabLayout1.setup();
     }
 
@@ -85,5 +87,22 @@ public class CommonTabLayoutActivity extends AppCompatActivity {
         tabLayout3.setTabIndicator(indicator);
         tabLayout3.setViewPager(pager);
         tabLayout3.setup();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.tablayout_common, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_clear_tab1:
+                tabLayout1.setCurrentItem(-1);
+                break;
+        }
+        return true;
     }
 }

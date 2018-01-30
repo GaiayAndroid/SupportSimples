@@ -206,9 +206,12 @@ public class CommonTabLayout extends LinearLayout implements ICommonTabLayout {
         }
     }
 
+    /**
+     * @param position <0：表示清空所有的选中状态；>=0：表示选中对应的tab
+     */
     @Override
     public void setCurrentItem(int position) {
-        if (mIndicator != null && mViewPager == null) {
+        if (mIndicator != null && mViewPager == null && getChildCount() > 0) {
             onSelected(position);
         }
         this.mCurrentItem = position;

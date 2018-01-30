@@ -66,12 +66,14 @@ public class StripTabIndicator extends TabIndicator {
             mPaint.setStrokeCap(Paint.Cap.ROUND);
             mPaint.setStrokeWidth(mIndicatorHeight);
         }
-        c.drawLine(mRect.left, mRect.bottom, mRect.right, mRect.bottom, mPaint);
+        if (mRect != null) {
+            c.drawLine(mRect.left, mRect.bottom, mRect.right, mRect.bottom, mPaint);
+        }
     }
 
     @Override
     protected boolean onScrolled(int position, float positionOffset, CommonTabLayout tabLayout) {
-        RectF rect =  buildRect(position, positionOffset, tabLayout);
+        RectF rect = buildRect(position, positionOffset, tabLayout);
         if (mRect != null && rect != null && mRect.equals(rect)) {
             return false;
         }
@@ -80,13 +82,16 @@ public class StripTabIndicator extends TabIndicator {
     }
 
     private RectF buildRect(int position, float positionOffset, CommonTabLayout tabLayout) {
+        RectF rect = new RectF();
+        if (position < 0) {
+            return rect;
+        }
         final View selectedChild = tabLayout.getChildAt(position);
         final View nextChild = position + 1 < tabLayout.getChildCount() ? tabLayout.getChildAt(position + 1) : null;
 
         final int selectedWidth = selectedChild.getWidth();
         final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
 
-        RectF rect = new RectF();
         // 改成了drawLine，不需要top属性
 //        rect.top = tabLayout.getHeight() - mIndicatorHeight - mIndicatorMargin;
         // 之所以减去mIndicatorHeightHalf，是因为画线的时候，是从线的中间坐标开始画

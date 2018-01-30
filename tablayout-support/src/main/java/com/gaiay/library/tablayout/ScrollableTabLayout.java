@@ -118,9 +118,12 @@ public class ScrollableTabLayout extends HorizontalScrollView implements ICommon
         }
     }
 
+    /**
+     * @param position <0：表示清空所有的选中状态；>=0：表示选中对应的tab
+     */
     @Override
     public void setCurrentItem(int position) {
-        if (mTabLayout.getViewPager() == null) {
+        if (mTabLayout.getViewPager() == null && getChildCount() > 0) {
             scrollToPosition(position);
         }
         mTabLayout.setCurrentItem(position);
